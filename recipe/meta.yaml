@@ -1,6 +1,6 @@
 {% set name = "cuda-nvprune" %}
-{% set version = "12.4.127" %}
-{% set cuda_version = "12.4" %}
+{% set version = "12.8.90" %}
+{% set cuda_version = "12.8" %}
 {% set platform = "linux-x86_64" %}  # [linux64]
 {% set platform = "linux-ppc64le" %}  # [ppc64le]
 {% set platform = "linux-sbsa" %}  # [aarch64]
@@ -14,28 +14,35 @@ package:
 
 source:
   url: https://developer.download.nvidia.com/compute/cuda/redist/cuda_nvprune/{{ platform }}/cuda_nvprune-{{ platform }}-{{ version }}-archive.{{ extension }}
-  sha256: 85d348b08d1e652ac2fd6377d1f837aa1aeaf7f784aa451175fd5ea58fd3b28b  # [linux64]
-  sha256: 28b297f44bf568b7e477ede212457216c215ffceb53e0610d942e573b95fec05  # [ppc64le]
-  sha256: ec6b7ed538496507b99274b5361f36cf84ad18048892e0c6ebf74336c0181b15  # [aarch64]
-  sha256: a322bb849e8974e759d1287977dd237d4ca240159e70fe3e131df600a7cf4d32  # [win]
+  sha256: 599a65f7f6d8f245d03a38344bf8c785a7bfbcd40eaa76f80c4608ca801da5f8  # [linux64]
+  sha256: 141e6f0f28b60b416ca90341079d6cb553a6914308ac15fd8ad0602989702ed6  # [aarch64]
+  sha256: 90f9f7137a94e41eb5dd005f05298e556f644afa10ba2e59d6421b18af9c116d  # [win]
 
 build:
   number: 1
-  skip: true  # [osx or (linux and s390x)]
+  binary_relocation: false
+  skip: true  # [osx or ppc64le]
 
 requirements:
   build:
     - {{ compiler("c") }}
     - {{ compiler("cxx") }}
+    - {{ stdlib("c") }}
+    - cf-nvidia-tools 1  # [linux]
   host:
     - cuda-version {{ cuda_version }}
   run:
     - {{ pin_compatible("cuda-version", max_pin="x.x") }}
 
 test:
+  requires:
+    - patchelf                                                # [linux]
+  files:
+    - test-rpath.sh                                           # [linux]
   commands:
     - test -f $PREFIX/bin/nvprune  # [unix]
     - if not exist %LIBRARY_BIN%\\nvprune.exe exit 1  # [win]
+    - bash test-rpath.sh                                      # [linux]
 
 about:
   home: https://developer.nvidia.com/cuda-toolkit

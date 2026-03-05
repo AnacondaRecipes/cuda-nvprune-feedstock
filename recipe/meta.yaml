@@ -23,9 +23,9 @@ source:
   sha256: be23018507f015ca948c503a43a3c48449c0dc1ceaab1e721caf01f024727312  # [win]
 
 build:
-  number: 1
+  number: 0
   binary_relocation: false
-  skip: true  # [osx or ppc64le]
+  skip: true  # [osx]
 
 requirements:
   build:
@@ -54,11 +54,13 @@ about:
   license_file: LICENSE
   license: LicenseRef-NVIDIA-End-User-License-Agreement
   license_url: https://docs.nvidia.com/cuda/eula/index.html
+  license_family: Other
   summary: Prunes host object files and libraries to only contain device code
   description: |
     Prunes host object files and libraries to only contain device code for the
     specified targets.
   doc_url: https://docs.nvidia.com/cuda/index.html
+  dev_url: https://docs.nvidia.com/cuda/index.html
 
 extra:
   recipe-maintainers:
